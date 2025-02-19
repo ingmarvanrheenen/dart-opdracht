@@ -1,0 +1,25 @@
+{
+  "name": "website-project",
+  "version": "1.0.0",
+  "description": "Website using TypeScript and Tailwind CSS",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "build": "webpack --mode production && npx tailwindcss -i ./src/styles/input.css -o ./dist/styles/output.css",
+    "watch": "webpack --watch --mode development"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "tailwindcss": "^3.3.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "ts-loader": "^9.4.3",
+    "html-webpack-plugin": "^5.5.3",
+    "css-loader": "^6.8.1",
+    "postcss": "^8.4.24",
+    "postcss-loader": "^7.3.3",
+    "style-loader": "^3.3.3",
+    "postcss-preset-env": "^8.5.1",
+    "file-loader": "^6.2.0"
+  }
+}
