@@ -2,11 +2,11 @@ import { Explosion } from '../utils/explosion';
 import { Blood } from '../utils/blood';
 import { projectiles } from '../ui/projectiles';
 import { SoundManager } from '../audio/SoundManager';
-import { ScoreManager } from './ScoreManager';
-import { ScoreDisplayManager } from './ScoreDisplayManager';
-import { ToastManager } from './ToastManager';
-import { ProjectilePhysics } from '../physics/ProjectilePhysics';
-import { TargetManager } from './TargetManager';
+import { ScoreManager } from '../managers/ScoreManager';
+import { ScoreDisplayManager } from '../managers/ScoreDisplayManager';
+import { ToastManager } from '../managers/ToastManager';
+import { ProjectilePhysics } from './ProjectilePhysics';
+import { TargetManager } from '../managers/TargetManager';
 
 interface GameObject {
     x: number;

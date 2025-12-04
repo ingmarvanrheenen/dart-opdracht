@@ -11,7 +11,7 @@ import { ScoreManager } from './managers/ScoreManager';
 import { UIManager } from './managers/UIManager';
 import { ToastManager } from './managers/ToastManager';
 import { ScoreDisplayManager } from './managers/ScoreDisplayManager';
-import { GamePhysics } from './managers/GamePhysics';
+import { GamePhysics } from './physics/GamePhysics';
 import { TargetManager, GameObject } from './managers/TargetManager';
 import { ConsoleManager } from './managers/ConsoleManager';
 import { GameModeManager } from './managers/GameModeManager';
