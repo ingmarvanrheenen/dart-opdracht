@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Silly Dart Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gradient-to-br from-indigo-200 to-blue-100 min-h-screen py-8">
     <div class="container mx-auto px-4">
         <h1 class="text-4xl font-extrabold text-center my-8 text-indigo-800 drop-shadow-lg">
-            🎯 Silly Launcher Game
+            Crazy Brazy Dart Game
         </h1>
         
         <div class="grid md:grid-cols-[1fr,300px] gap-6">
@@ -34,14 +35,14 @@
                 <!-- Add this at the top of the controls panel -->
                 <button id="muteButton" 
                     class="absolute top-4 right-4 w-10 h-10 text-xl bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-                    🔊
+                    <i class="fa-solid fa-volume-high"></i>
                 </button>
                 <!-- Add this before the angle control -->
                 <div class="flex items-center justify-between mb-4">
                     <label class="text-sm font-medium text-gray-700">Hard Mode</label>
                     <button id="hardModeToggle" 
                         class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
-                        Easy Mode 🎯
+                        Easy Mode <i class="fa-solid fa-bullseye"></i>
                     </button>
                 </div>
                 <!-- Add this after the hard mode toggle -->
@@ -49,7 +50,7 @@
                     <label class="text-sm font-medium text-gray-700">Weird Physics</label>
                     <button id="weirdModeToggle" 
                         class="px-4 py-2 rounded-lg bg-purple-100 hover:bg-purple-200 transition-colors">
-                        Normal 🎯
+                        Normal <i class="fa-solid fa-bullseye"></i>
                     </button>
                 </div>
                 <!-- Angle Control -->
@@ -85,7 +86,7 @@
                 <!-- Fire Button -->
                 <button id="fireButton" 
                     class="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 px-4 rounded-lg font-bold text-lg shadow-lg hover:from-red-600 hover:to-pink-600 transform hover:scale-105 transition-all">
-                    FIRE! 🔥
+                    FIRE! <i class="fa-solid fa-fire"></i>
                 </button>
 
                 <!-- Instructions -->
@@ -102,7 +103,7 @@
                 
                 <!-- High Score -->
                 <div class="bg-yellow-50 rounded-lg p-4 text-sm">
-                    <h3 class="font-bold text-yellow-800 mb-2">🏆 High Score</h3>
+                    <h3 class="font-bold text-yellow-800 mb-2"><i class="fa-solid fa-trophy"></i> High Score</h3>
                     <p id="highScoreDisplay" class="text-2xl font-bold text-yellow-600 text-center">0</p>
                 </div>
             </div>

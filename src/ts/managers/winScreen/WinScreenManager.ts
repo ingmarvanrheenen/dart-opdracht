@@ -7,193 +7,240 @@ import { StatsDisplay } from './components/StatsDisplay';
 export class WinScreenManager {
     private overlay: HTMLDivElement;
     private achievementStats: Record<string, number>;
+    private cleanupController: AbortController | null = null;
 
     constructor(private onRestart: () => void) {
         this.overlay = this.createOverlay();
         document.body.appendChild(this.overlay);
         this.achievementStats = StorageManager.loadAchievementStats();
+        this.injectCustomStyles();
         this.hideScreen();
         ConfettiEffect.addStyles();
     }
 
     showScreen(score: number, highScore: number, stats?: GameStats) {
         const isNewHighScore = score >= highScore;
-        const earnedAchievements = AchievementDisplay.calculateEarned(stats || this.getDefaultStats());
+        const currentStats = stats || this.getDefaultStats();
+        
+        // Calculate achievements
+        const earnedAchievements = AchievementDisplay.calculateEarned(currentStats);
         this.updateAchievementStats(earnedAchievements);
         
+        // Render Content
         this.overlay.innerHTML = `
-            <div class="bg-gradient-to-br from-indigo-50 to-white p-8 rounded-2xl shadow-2xl w-full max-w-7xl text-center transform scale-95 opacity-0 transition-all duration-500 relative overflow-hidden">
-                ${this.createBackgroundEffects()}
+            <div class="relative w-full max-w-6xl mx-auto transform transition-all duration-500 opacity-0 scale-95" id="win-modal-content">
                 
-                <div class="grid md:grid-cols-3 gap-8 relative z-10">
-                    <!-- Left Column: Victory -->
-                    <div class="flex flex-col justify-between border-r border-indigo-100 pr-8">
-                        ${this.createVictorySection(score, highScore, isNewHighScore)}
-                    </div>
+                <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative">
+                    
+                    ${this.createBackgroundEffects()}
 
-                    <!-- Middle Column: Achievements -->
-                    <div class="border-r border-indigo-100 pr-8">
-                        <h3 class="text-2xl font-bold text-indigo-800 mb-6">Achievements</h3>
-                        <div class="space-y-4 overflow-y-auto max-h-[500px] pr-2">
-                            ${AchievementDisplay.render(stats || this.getDefaultStats(), this.achievementStats)}
+                    <div class="relative z-10 grid md:grid-cols-12 gap-0">
+                        
+                        <div class="md:col-span-4 bg-gradient-to-b from-indigo-50/50 to-white/50 p-8 border-r border-indigo-100/50 flex flex-col justify-between">
+                            ${this.createVictorySection(score, highScore, isNewHighScore)}
                         </div>
-                    </div>
 
-                    <!-- Right Column: Stats -->
-                    <div class="space-y-6">
-                        <h3 class="text-2xl font-bold text-indigo-800 sticky top-0 backdrop-blur-sm py-2">
-                            Game Statistics
-                        </h3>
-                        ${StatsDisplay.render(stats || this.getDefaultStats())}
+                        <div class="md:col-span-4 p-8 border-r border-indigo-100/50 flex flex-col h-[600px]">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="p-2 bg-fuchsia-100 text-fuchsia-600 rounded-lg">
+                                    <i class="fa-solid fa-medal text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800">Achievements</h3>
+                            </div>
+                            
+                            <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3">
+                                ${AchievementDisplay.render(currentStats, this.achievementStats)}
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-4 p-8 bg-slate-50/30 flex flex-col h-[600px]">
+                             <div class="flex items-center gap-3 mb-6">
+                                <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                    <i class="fa-solid fa-chart-pie text-xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800">Session Stats</h3>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto">
+                                ${StatsDisplay.render(currentStats)}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         `;
 
         this.setupEventListeners();
-        this.animateOverlay();
+        this.animateOverlayEntrance();
         
-        // Create confetti effects
-        ConfettiEffect.create(this.overlay, isNewHighScore);
+        // Trigger visual FX
+        if (isNewHighScore) {
+            ConfettiEffect.create(this.overlay, true);
+        } else {
+            ConfettiEffect.create(this.overlay, false);
+        }
     }
 
     private updateAchievementStats(earned: string[]): void {
+        let changed = false;
         earned.forEach(achievement => {
+            if (!this.achievementStats[achievement]) changed = true;
             this.achievementStats[achievement] = (this.achievementStats[achievement] || 0) + 1;
         });
-        StorageManager.saveAchievementStats(this.achievementStats);
+        if (changed || earned.length > 0) {
+            StorageManager.saveAchievementStats(this.achievementStats);
+        }
     }
 
     private getDefaultStats(): GameStats {
-        return {
-            accuracy: 0,
-            fastestHit: 0,
-            targetHits: 0,
-            groundHits: 0
-        };
+        return { accuracy: 0, fastestHit: 0, targetHits: 0, groundHits: 0 };
     }
 
     private createOverlay(): HTMLDivElement {
         const overlay = document.createElement('div');
-        overlay.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center transition-opacity duration-300 backdrop-blur-sm z-50';
+        // Z-index 50 to ensure it's on top, darker backdrop for contrast
+        overlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50 opacity-0 pointer-events-none';
         return overlay;
     }
 
     private createBackgroundEffects(): string {
         return `
-            <div class="absolute inset-0 opacity-10">
-                <div class="absolute top-0 left-0 w-32 h-32 bg-yellow-400 rounded-full filter blur-3xl"></div>
-                <div class="absolute bottom-0 right-0 w-32 h-32 bg-purple-400 rounded-full filter blur-3xl"></div>
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-400 rounded-full filter blur-3xl"></div>
-            </div>
-        `;
-    }
-
-    private createHighScoreContent(score: number): string {
-        return `
-            <div class="relative p-6">
-                <div class="animate-float">
-                    <div class="flex justify-center items-center space-x-4 mb-8">
-                        <span class="text-8xl animate-bounce-slow">🎯</span>
-                        <span class="text-8xl animate-bounce-slow delay-150">🏆</span>
-                        <span class="text-8xl animate-bounce-slow delay-300">🌟</span>
-                    </div>
-                    <h2 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r 
-                        from-yellow-400 via-pink-500 to-purple-600 animate-gradient-x py-2 mb-6">
-                        NEW RECORD!
-                    </h2>
-                    <div class="text-7xl font-black text-indigo-600 animate-pulse-slow">
-                        ${score}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    private createVictoryContent(score: number, highScore: number): string {
-        return `
-            <div>
-                <div class="text-6xl mb-4">🎯</div>
-                <h2 class="text-5xl font-bold text-indigo-600 mb-4">Victory!</h2>
-                <div class="space-y-2">
-                    <p class="text-3xl font-bold text-gray-700">Score: <span class="text-indigo-600">${score}</span></p>
-                    <p class="text-xl text-gray-600">High Score: <span class="font-bold text-yellow-600">${highScore}</span></p>
-                </div>
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute -top-24 -left-24 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse-slow"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-fuchsia-400/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl animate-pulse-slow delay-700"></div>
             </div>
         `;
     }
 
     private createVictorySection(score: number, highScore: number, isNewHighScore: boolean): string {
-        return `
-            <div>
-                ${isNewHighScore ? 
-                    this.createHighScoreContent(score) : 
-                    this.createVictoryContent(score, highScore)}
-            </div>
-            <div class="mt-auto">
-                ${this.createRestartButton()}
-            </div>
-        `;
-    }
+        const title = isNewHighScore ? "New Record!" : "Complete!";
+        const scoreColor = isNewHighScore 
+            ? "bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent" 
+            : "text-violet-600";
+        
+        const icon = isNewHighScore ? "fa-trophy text-amber-400" : "fa-flag-checkered text-violet-500";
 
-    private createRestartButton(): string {
         return `
-            <div class="flex flex-col gap-4">
+            <div class="text-center mt-4">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-lg mb-6">
+                    <i class="fa-solid ${icon} text-4xl"></i>
+                </div>
+                
+                <h2 class="text-4xl font-black text-slate-800 mb-2 tracking-tight">${title}</h2>
+                <div class="text-sm font-medium text-slate-400 uppercase tracking-wider mb-8">Match Result</div>
+
+                <div class="space-y-6">
+                    <div class="bg-white/60 rounded-2xl p-6 shadow-sm border border-white/50">
+                        <div class="text-sm text-slate-500 mb-1">Final Score</div>
+                        <div class="text-6xl font-black ${scoreColor} tracking-tighter">
+                            ${score}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-2 text-slate-600 font-medium bg-slate-100/50 py-2 rounded-lg">
+                        <i class="fa-solid fa-crown text-amber-500"></i>
+                        <span>Best: ${Math.max(score, highScore)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
                 <button id="restartButton" 
-                    class="group bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-10 py-4 rounded-xl font-bold text-xl
-                    hover:from-indigo-600 hover:to-purple-600 transform hover:scale-105 transition-all duration-300 shadow-lg w-full">
-                    <span class="flex items-center justify-center gap-3">
-                        Play Again! 
-                        <span class="group-hover:rotate-180 transition-transform duration-300">🚀</span>
+                    class="group relative w-full bg-slate-900 text-white p-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all duration-200 overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <span class="relative flex items-center justify-center gap-2">
+                        Play Again <i class="fa-solid fa-rotate-right group-hover:rotate-180 transition-transform duration-500"></i>
                     </span>
                 </button>
-                
-                <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
-                    <kbd class="px-2 py-1 bg-gray-100 rounded-md shadow">SPACE</kbd>
-                    <span>to restart</span>
+                <div class="text-center mt-3">
+                    <span class="text-xs font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded border border-slate-200">SPACE</span>
                 </div>
             </div>
         `;
     }
 
     private setupEventListeners(): void {
-        const handleKeyPress = (e: KeyboardEvent) => {
-            if (e.code === 'Space') {
-                this.hideScreen();
-                this.onRestart();
-                document.removeEventListener('keydown', handleKeyPress);
-            }
-        };
-        document.addEventListener('keydown', handleKeyPress);
+        // Create a controller to clean up all listeners at once
+        this.cleanupController = new AbortController();
+        const { signal } = this.cleanupController;
 
-        const restartButton = this.overlay.querySelector('#restartButton');
-        restartButton?.addEventListener('click', () => {
-            this.hideScreen();
-            this.onRestart();
-            document.removeEventListener('keydown', handleKeyPress);
-        });
+        // Keyboard listener
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent scrolling
+                this.handleRestart();
+            }
+        }, { signal });
+
+        // Click listener
+        const btn = this.overlay.querySelector('#restartButton');
+        btn?.addEventListener('click', () => this.handleRestart(), { signal });
     }
 
-    private animateOverlay(): void {
+    private handleRestart(): void {
+        // Prevent double clicks
+        if (this.cleanupController?.signal.aborted) return;
+
+        this.hideScreen();
+        // Small delay to allow fade out before logic reset
+        setTimeout(() => this.onRestart(), 300);
+    }
+
+    private animateOverlayEntrance(): void {
         this.overlay.style.display = 'flex';
-        requestAnimationFrame(() => {
-            const modal = this.overlay.querySelector('div');
-            if (modal) {
-                modal.style.opacity = '1';
-                modal.style.transform = 'scale(1)';
-            }
-        });
+        this.overlay.style.pointerEvents = 'auto'; // Re-enable clicks
+        
+        // Force reflow
+        this.overlay.offsetHeight; 
+
+        this.overlay.style.opacity = '1';
+        
+        const content = this.overlay.querySelector('#win-modal-content') as HTMLElement;
+        if (content) {
+            content.style.opacity = '1';
+            content.style.transform = 'scale(1)';
+        }
     }
 
     hideScreen(): void {
-        const modal = this.overlay.querySelector('div');
-        if (modal) {
-            modal.style.opacity = '0';
-            modal.style.transform = 'scale(0.95)';
+        // 1. Remove listeners immediately
+        if (this.cleanupController) {
+            this.cleanupController.abort();
+            this.cleanupController = null;
         }
+
+        // 2. Start Visual Exit
+        const content = this.overlay.querySelector('#win-modal-content') as HTMLElement;
+        if (content) {
+            content.style.opacity = '0';
+            content.style.transform = 'scale(0.95)';
+        }
+        this.overlay.style.opacity = '0';
+        this.overlay.style.pointerEvents = 'none';
+
+        // 3. Remove from DOM flow after animation
         setTimeout(() => {
             this.overlay.style.display = 'none';
-            this.overlay.innerHTML = '';
-        }, 500);
+            this.overlay.innerHTML = ''; // Clean up DOM
+        }, 300);
+    }
+
+    // Helper to inject a tiny bit of CSS for the custom scrollbar
+    private injectCustomStyles(): void {
+        if (document.getElementById('win-screen-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'win-screen-styles';
+        style.textContent = `
+            .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.2); border-radius: 4px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.4); }
+            @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+            .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+            .animate-bounce-slow { animation: float 3s ease-in-out infinite; }
+        `;
+        document.head.appendChild(style);
     }
 }

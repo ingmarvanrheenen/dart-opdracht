@@ -26,11 +26,11 @@ export class StatsDisplay {
             </div>
             <div class="space-y-2">
                 <p class="text-sm font-medium text-indigo-600">Target Hits</p>
-                <p class="text-2xl font-bold">${stats.targetHits} 🎯</p>
+                <p class="text-2xl font-bold">${stats.targetHits} <i class="fa-solid fa-bullseye"></i></p>
             </div>
             <div class="space-y-2">
                 <p class="text-sm font-medium text-indigo-600">Ground Hits</p>
-                <p class="text-2xl font-bold">${stats.groundHits} 💥</p>
+                <p class="text-2xl font-bold">${stats.groundHits} <i class="fa-solid fa-explosion"></i></p>
             </div>
         `;
     }
@@ -38,7 +38,7 @@ export class StatsDisplay {
     private static createBabyStats(babyStats: BabyStats): string {
         return `
             <div class="col-span-2 mt-2 p-3 bg-pink-50 rounded-lg">
-                <p class="text-pink-600 font-medium">Baby Launcher Stats 👶</p>
+                <p class="text-pink-600 font-medium">Baby Launcher Stats <i class="fa-solid fa-baby"></i></p>
                 <div class="grid grid-cols-2 gap-2 mt-2">
                     <p>Babies Launched: ${babyStats.launched}</p>
                     <p>Ground Splats: ${babyStats.groundSplats}</p>
@@ -52,7 +52,7 @@ export class StatsDisplay {
     private static createHumanStats(humanStats: HumanStats): string {
         return `
             <div class="col-span-2 mt-2 p-3 bg-blue-50 rounded-lg">
-                <p class="text-blue-600 font-medium">Human Launcher Stats 🧑</p>
+                <p class="text-blue-600 font-medium">Human Launcher Stats <i class="fa-solid fa-person"></i></p>
                 <div class="grid grid-cols-2 gap-2 mt-2">
                     <p>Humans Launched: ${humanStats.launched}</p>
                     <p>Cybertrucks Destroyed: ${humanStats.cybertucksDestroyed}</p>
@@ -66,13 +66,13 @@ export class StatsDisplay {
     private static createFunnyMessage(stats: GameStats): string {
         let message = '';
         if (stats.groundHits > stats.targetHits) {
-            message = "More splats than hits! Maybe try aiming higher? 🤪";
+            message = "More splats than hits! Maybe try aiming higher? <i class='fa-solid fa-face-grin-tongue'></i>";
         } else if (stats.accuracy > 80) {
-            message = "Sniper in the making! 🎯";
+            message = "Sniper in the making! <i class='fa-solid fa-bullseye'></i>";
         } else if (stats.fastestHit < 2) {
-            message = "Speed demon! ⚡";
+            message = "Speed demon! <i class='fa-solid fa-bolt'></i>";
         } else {
-            message = "Not bad, keep practicing! 👍";
+            message = "Not bad, keep practicing! <i class='fa-solid fa-thumbs-up'></i>";
         }
 
         return `

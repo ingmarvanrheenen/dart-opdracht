@@ -197,7 +197,7 @@ export class TargetManager {
                 this.gameStats
             );
             
-            ToastManager.show('All targets destroyed! 🎯', 'success');
+            ToastManager.show('All targets destroyed! <i class="fa-solid fa-bullseye"></i>', 'success');
         }
     }
 

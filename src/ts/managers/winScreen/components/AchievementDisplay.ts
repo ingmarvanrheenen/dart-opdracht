@@ -47,7 +47,7 @@ export class AchievementDisplay {
                                 <div class="achievement-item ${isEarned ? 'opacity-100' : 'opacity-40'} 
                                      flex items-center gap-3 p-3 rounded-lg ${isEarned ? 'bg-white' : 'bg-gray-100'}
                                      transition-all duration-300 hover:scale-102">
-                                    <span class="text-2xl ${isEarned ? 'animate-bounce-slow' : ''}">${ach.emoji}</span>
+                                    <span class="text-2xl ${isEarned ? 'animate-bounce-slow' : ''}"><i class="${ach.iconClass}"></i></span>
                                     <div class="flex flex-col flex-1 text-left">
                                         <div class="flex justify-between items-center">
                                             <span class="font-medium text-sm">${ach.text}</span>
@@ -57,7 +57,7 @@ export class AchievementDisplay {
                                         </div>
                                         <span class="text-xs text-gray-500">${ach.requirement}</span>
                                     </div>
-                                    ${isEarned ? '<span class="text-green-500">✓</span>' : ''}
+                                    ${isEarned ? '<span class="text-green-500"><i class="fa-solid fa-check"></i></span>' : ''}
                                 </div>
                             `;
                         }).join('')}
@@ -71,17 +71,17 @@ export class AchievementDisplay {
     private static createFunnyMessage(stats: GameStats, achievements: string[]): string {
         let message = '';
         if (achievements.length === 0) {
-            message = "Keep practicing! You'll get there! 🎯";
+            message = "Keep practicing! You'll get there! <i class='fa-solid fa-bullseye'></i>";
         } else if (achievements.includes('PERFECT_ROUND')) {
-            message = "Perfect aim! You're a natural! 🌟";
+            message = "Perfect aim! You're a natural! <i class='fa-solid fa-star'></i>";
         } else if (achievements.includes('SHARP_SHOOTER')) {
-            message = "Sniper in the making! 🎯";
+            message = "Sniper in the making! <i class='fa-solid fa-bullseye'></i>";
         } else if (achievements.includes('SPEED_DEMON')) {
-            message = "Lightning fast! ⚡";
+            message = "Lightning fast! <i class='fa-solid fa-bolt'></i>";
         } else if (stats.groundHits > stats.targetHits) {
-            message = "More splats than hits! Maybe try aiming higher? 🤪";
+            message = "More splats than hits! Maybe try aiming higher? <i class='fa-solid fa-face-grin-tongue'></i>";
         } else {
-            message = "Not bad! Keep going for more achievements! 👍";
+            message = "Not bad! Keep going for more achievements! <i class='fa-solid fa-thumbs-up'></i>";
         }
 
         return `

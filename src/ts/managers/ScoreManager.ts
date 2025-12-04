@@ -158,7 +158,7 @@ export class ScoreManager {
         if (this.currentScore > this.highScore) {
             this.highScore = this.currentScore;
             this.saveHighScoreToPersistence();
-            ToastManager.show(`New High Score: ${this.highScore}! 🎉`);
+            ToastManager.show(`New High Score: ${this.highScore}! <i class="fa-solid fa-trophy"></i>`);
             return true;
         }
         return false;

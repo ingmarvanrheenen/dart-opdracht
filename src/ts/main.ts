@@ -120,7 +120,7 @@ class Game {
         if (weirdModeToggle) {
             weirdModeToggle.addEventListener('click', () => {
                 this.physicsConfig.isWeirdMode = !this.physicsConfig.isWeirdMode;
-                weirdModeToggle.textContent = this.physicsConfig.isWeirdMode ? 'Weird 🌀' : 'Normal 🎯';
+                weirdModeToggle.innerHTML = this.physicsConfig.isWeirdMode ? 'Weird <i class="fa-solid fa-hurricane"></i>' : 'Normal <i class="fa-solid fa-bullseye"></i>';
                 weirdModeToggle.classList.toggle('bg-purple-300');
                 
                 // Add some fun effects when toggling
@@ -231,9 +231,9 @@ class Game {
             this.ctx.shadowBlur = 4;
             
             // Display coordinates and game info
-            this.ctx.fillText(`📍 X: ${mousePos.x.toFixed(0)} Y: ${mousePos.y.toFixed(0)}`, 20, 65);
-            this.ctx.fillText(`🎯 Angle: ${this.angle.toFixed(1)}°`, 20, 85);
-            this.ctx.fillText(`💪 Power: ${this.power}%`, 20, 105);
+            this.ctx.fillText(`Pos: ${mousePos.x.toFixed(0)}, ${mousePos.y.toFixed(0)}`, 20, 65);
+            this.ctx.fillText(`Angle: ${this.angle.toFixed(1)}°`, 20, 85);
+            this.ctx.fillText(`Power: ${this.power}%`, 20, 105);
             
             this.ctx.restore();
         }

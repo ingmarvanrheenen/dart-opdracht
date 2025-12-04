@@ -1,28 +1,28 @@
 export class ToastManager {
     private static readonly sillyMessages = {
         success: [
-            "🎯 BOOM-SHAKALAKA!",
-            "🚀 That was out of this world!",
-            "🎪 Step right up, we have a winner!",
-            "🦄 Magic happens!",
-            "🎭 Oscar-worthy shot!",
-            "🌟 You're on fire! (not literally)",
-            "🎪 The crowd goes wild!",
-            "🎮 Pro gamer move!",
-            "🎪 Skill level: LEGENDARY",
-            "🎯 You could do this blindfolded! (please don't)"
+            "<i class='fa-solid fa-bullseye'></i> BOOM-SHAKALAKA!",
+            "<i class='fa-solid fa-rocket'></i> That was out of this world!",
+            "<i class='fa-solid fa-tent'></i> Step right up, we have a winner!",
+            "<i class='fa-solid fa-wand-magic-sparkles'></i> Magic happens!",
+            "<i class='fa-solid fa-masks-theater'></i> Oscar-worthy shot!",
+            "<i class='fa-solid fa-star'></i> You're on fire! (not literally)",
+            "<i class='fa-solid fa-tent'></i> The crowd goes wild!",
+            "<i class='fa-solid fa-gamepad'></i> Pro gamer move!",
+            "<i class='fa-solid fa-tent'></i> Skill level: LEGENDARY",
+            "<i class='fa-solid fa-bullseye'></i> You could do this blindfolded! (please don't)"
         ],
         error: [
-            "🤦‍♂️ Oopsie daisy!",
-            "🎭 Plot twist: That wasn't supposed to happen",
-            "🌪️ Gone with the wind!",
-            "🎪 Task failed successfully!",
-            "🎮 Have you tried turning it off and on again?",
-            "🎯 Close! (not really)",
-            "🌟 At least you tried!",
-            "🎪 The crowd goes mild...",
-            "🎭 Drama queen much?",
-            "🦄 Even unicorns miss sometimes"
+            "<i class='fa-solid fa-face-flushed'></i> Oopsie daisy!",
+            "<i class='fa-solid fa-masks-theater'></i> Plot twist: That wasn't supposed to happen",
+            "<i class='fa-solid fa-wind'></i> Gone with the wind!",
+            "<i class='fa-solid fa-tent'></i> Task failed successfully!",
+            "<i class='fa-solid fa-gamepad'></i> Have you tried turning it off and on again?",
+            "<i class='fa-solid fa-bullseye'></i> Close! (not really)",
+            "<i class='fa-solid fa-star'></i> At least you tried!",
+            "<i class='fa-solid fa-tent'></i> The crowd goes mild...",
+            "<i class='fa-solid fa-masks-theater'></i> Drama queen much?",
+            "<i class='fa-solid fa-horse'></i> Even unicorns miss sometimes"
         ]
     };
 
@@ -38,7 +38,7 @@ export class ToastManager {
         
         toast.style.bottom = '100px';
         toast.style.right = '25px';
-        toast.textContent = sillyMessage;
+        toast.innerHTML = sillyMessage;
         
         canvas.parentElement.style.position = 'relative';
         canvas.parentElement.appendChild(toast);

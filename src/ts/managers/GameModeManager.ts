@@ -16,7 +16,7 @@ export class GameModeManager {
     }
 
     private updateUI() {
-        this.hardModeButton.textContent = this.isHardMode ? 'Hard Mode 😈' : 'Easy Mode 🎯';
+        this.hardModeButton.innerHTML = this.isHardMode ? 'Hard Mode <i class="fa-solid fa-skull"></i>' : 'Easy Mode <i class="fa-solid fa-bullseye"></i>';
         this.hardModeButton.className = this.isHardMode ?
             'px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 transition-colors' :
             'px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors';

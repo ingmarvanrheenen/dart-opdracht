@@ -59,7 +59,7 @@ export class UIManager {
         const muteBtn = document.getElementById('muteButton');
         muteBtn?.addEventListener('click', () => {
             const isMuted = this.onMuteToggle();
-            muteBtn.textContent = isMuted ? '🔇' : '🔊';
+            muteBtn.innerHTML = isMuted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
         });
     }
 
