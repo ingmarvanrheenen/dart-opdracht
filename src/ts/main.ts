@@ -15,6 +15,7 @@ import { GamePhysics } from './physics/GamePhysics';
 import { TargetManager, GameObject } from './managers/TargetManager';
 import { ConsoleManager } from './managers/ConsoleManager';
 import { GameModeManager } from './managers/GameModeManager';
+import { BackgroundManager } from './managers/BackgroundManager';
 
 class Game {
     private canvas: HTMLCanvasElement;
@@ -48,6 +49,7 @@ class Game {
     private targetManager: TargetManager;
     private consoleManager: ConsoleManager;
     private gameModeManager: GameModeManager;
+    private backgroundManager: BackgroundManager;
 
     constructor() {
         this.canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
@@ -55,13 +57,17 @@ class Game {
         this.scoreManager = new ScoreManager();
         this.scoreDisplayManager = new ScoreDisplayManager();
         this.targetManager = new TargetManager(this.scoreManager, this.scoreDisplayManager);
+        this.backgroundManager = new BackgroundManager({ color: '#071024', initialMode: 'auto' });
         this.uiManager = new UIManager(
             (angle) => this.angle = angle,
             (power) => this.power = power,
             (index) => {
                 this.currentProjectile = index;
-                // Add this line to update target images when projectile changes
+                // Update target images when projectile changes
                 this.targetManager.updateTargetImage(index);
+                // Update background based on selected projectile
+                const proj = projectiles[index];
+                if (proj) this.backgroundManager.setByProjectile(proj.name);
             },
             () => this.fire(),
             () => this.soundManager.toggleMute()
@@ -69,6 +75,8 @@ class Game {
 
         // Add this line to connect UIManager with TargetManager
         this.uiManager.setTargetManager(this.targetManager);
+        // Connect UIManager with BackgroundManager so UI controls can change backgrounds
+        this.uiManager.setBackgroundManager(this.backgroundManager);
 
         this.targetManager.setOnTargetsUpdated((newTargets) => {
             this.targets = newTargets;
@@ -113,6 +121,8 @@ class Game {
             // Make game harder in hard mode
             this.physicsConfig.windStrength *= isHardMode ? 2 : 0.5;
             this.physicsConfig.gravity = isHardMode ? 0.5 : 0.4;
+            // Switch background for human-focused hard mode
+            this.backgroundManager.setMode(isHardMode ? 'human' : 'auto');
         });
 
         // Add weird mode toggle handler
@@ -193,6 +203,9 @@ class Game {
 
     private draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Draw background before all other game objects
+        this.backgroundManager.draw(this.ctx, this.canvas.width, this.canvas.height);
 
         // Draw aim line
         const mousePos = (this.consoleManager as any).getMousePosition?.() || { x: 0, y: 0 };

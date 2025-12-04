@@ -1,8 +1,11 @@
 import { projectiles } from '../ui/projectiles';
 import { TargetManager } from './TargetManager';
+import { BackgroundManager } from './BackgroundManager';
+
 
 export class UIManager {
     private targetManager?: TargetManager;
+    private bgManager?: BackgroundManager;
     constructor(
         private onAngleChange: (angle: number) => void,
         private onPowerChange: (power: number) => void,
@@ -16,6 +19,85 @@ export class UIManager {
 
     setTargetManager(manager: TargetManager) {
         this.targetManager = manager;
+    }
+
+    setBackgroundManager(manager: BackgroundManager) {
+        this.bgManager = manager;
+
+        const modeSelect = document.getElementById('bgModeSelect') as HTMLSelectElement | null;
+        const colorWrapper = document.getElementById('bgColorWrapper');
+        const customWrapper = document.getElementById('bgCustomWrapper');
+        const colorPicker = document.getElementById('bgColorPicker') as HTMLInputElement | null;
+        const colorApply = document.getElementById('bgColorApply');
+        const customUrl = document.getElementById('bgCustomUrl') as HTMLInputElement | null;
+        const customApply = document.getElementById('bgCustomApply');
+        const resetBtn = document.getElementById('bgResetDefault');
+
+        if (!modeSelect) return;
+
+        const updateVisibility = () => {
+            const mode = modeSelect.value;
+            if (colorWrapper) colorWrapper.classList.toggle('hidden', mode !== 'color');
+            if (customWrapper) customWrapper.classList.toggle('hidden', mode !== 'custom');
+        };
+
+        modeSelect.addEventListener('change', () => {
+            const mode = modeSelect.value as any;
+            updateVisibility();
+
+            if (!this.bgManager) return;
+            if (mode === 'color') {
+                this.bgManager.setMode('color');
+            } else if (mode === 'custom') {
+                this.bgManager.setMode('custom');
+            } else {
+                this.bgManager.setMode(mode);
+            }
+            try { localStorage.setItem('bgMode', mode); } catch {}
+        });
+
+        colorApply?.addEventListener('click', () => {
+            if (!this.bgManager || !colorPicker) return;
+            this.bgManager.setColor(colorPicker.value);
+            try { localStorage.setItem('bgColor', colorPicker.value); } catch {}
+        });
+
+        customApply?.addEventListener('click', () => {
+            if (!this.bgManager || !customUrl) return;
+            const url = customUrl.value.trim();
+            if (url) {
+                this.bgManager.setCustomBackground(url);
+                try { localStorage.setItem('bgCustomUrl', url); } catch {}
+            }
+        });
+
+        resetBtn?.addEventListener('click', () => {
+            if (!this.bgManager) return;
+            this.bgManager.setMode('auto');
+            modeSelect.value = 'auto';
+            updateVisibility();
+            try { localStorage.removeItem('bgMode'); localStorage.removeItem('bgCustomUrl'); } catch {}
+        });
+
+        // Load persisted preferences
+        try {
+            const savedMode = localStorage.getItem('bgMode');
+            const savedColor = localStorage.getItem('bgColor');
+            const savedUrl = localStorage.getItem('bgCustomUrl');
+            if (savedMode) {
+                modeSelect.value = savedMode;
+                if (savedMode === 'color' && savedColor) {
+                    if (colorPicker) colorPicker.value = savedColor;
+                    this.bgManager.setColor(savedColor);
+                } else if (savedMode === 'custom' && savedUrl) {
+                    if (customUrl) customUrl.value = savedUrl;
+                    this.bgManager.setCustomBackground(savedUrl);
+                } else {
+                    this.bgManager.setMode(savedMode as any);
+                }
+                updateVisibility();
+            }
+        } catch {}
     }
 
     private initializeUI() {
