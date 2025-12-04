@@ -28,7 +28,7 @@ export class WinScreenManager {
         
         // Render Content
         this.overlay.innerHTML = `
-            <div class="relative w-full max-w-6xl mx-auto transform transition-all duration-500 opacity-0 scale-95" id="win-modal-content">
+            <div class="relative w-full max-w-7xl mx-auto transform transition-all duration-500 opacity-0 scale-95" id="win-modal-content">
                 
                 <div class="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative">
                     
@@ -36,13 +36,13 @@ export class WinScreenManager {
 
                     <div class="relative z-10 grid md:grid-cols-12 gap-0">
                         
-                        <div class="md:col-span-4 bg-gradient-to-b from-indigo-50/50 to-white/50 p-8 border-r border-indigo-100/50 flex flex-col justify-between">
+                        <div class="md:col-span-4 bg-gradient-to-b from-brand-50/50 to-white/50 p-8 border-r border-brand-100/50 flex flex-col justify-between h-[80vh] max-h-[90vh] overflow-y-auto">
                             ${this.createVictorySection(score, highScore, isNewHighScore)}
                         </div>
 
-                        <div class="md:col-span-4 p-8 border-r border-indigo-100/50 flex flex-col h-[600px]">
+                        <div class="md:col-span-4 p-8 border-r border-brand-100/50 flex flex-col h-[80vh] max-h-[90vh] overflow-y-auto bg-slate-50/30">
                             <div class="flex items-center gap-3 mb-6">
-                                <div class="p-2 bg-fuchsia-100 text-fuchsia-600 rounded-lg">
+                                <div class="p-2 bg-brand-100 text-brand-600 rounded-lg">
                                     <i class="fa-solid fa-medal text-xl"></i>
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-800">Achievements</h3>
@@ -53,9 +53,9 @@ export class WinScreenManager {
                             </div>
                         </div>
 
-                        <div class="md:col-span-4 p-8 bg-slate-50/30 flex flex-col h-[600px]">
+                        <div class="md:col-span-4 p-8 flex flex-col h-[80vh] max-h-[90vh] overflow-y-auto bg-slate-50/30">
                              <div class="flex items-center gap-3 mb-6">
-                                <div class="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+                                <div class="p-2 bg-brand-100 text-brand-600 rounded-lg">
                                     <i class="fa-solid fa-chart-pie text-xl"></i>
                                 </div>
                                 <h3 class="text-xl font-bold text-gray-800">Session Stats</h3>
@@ -74,7 +74,6 @@ export class WinScreenManager {
         this.setupEventListeners();
         this.animateOverlayEntrance();
         
-        // Trigger visual FX
         if (isNewHighScore) {
             ConfettiEffect.create(this.overlay, true);
         } else {
@@ -82,6 +81,7 @@ export class WinScreenManager {
         }
     }
 
+    // ... (The rest of the private methods remain exactly the same as before)
     private updateAchievementStats(earned: string[]): void {
         let changed = false;
         earned.forEach(achievement => {
@@ -99,7 +99,6 @@ export class WinScreenManager {
 
     private createOverlay(): HTMLDivElement {
         const overlay = document.createElement('div');
-        // Z-index 50 to ensure it's on top, darker backdrop for contrast
         overlay.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center transition-opacity duration-300 z-50 opacity-0 pointer-events-none';
         return overlay;
     }
@@ -107,20 +106,21 @@ export class WinScreenManager {
     private createBackgroundEffects(): string {
         return `
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                <div class="absolute -top-24 -left-24 w-64 h-64 bg-violet-400/20 rounded-full blur-3xl animate-pulse-slow"></div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-fuchsia-400/10 rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl animate-pulse-slow delay-700"></div>
+                <div class="absolute -top-24 -left-24 w-64 h-64 bg-brand-400/20 rounded-full blur-3xl animate-pulse-slow"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-300/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl animate-pulse-slow delay-700"></div>
             </div>
         `;
     }
 
     private createVictorySection(score: number, highScore: number, isNewHighScore: boolean): string {
         const title = isNewHighScore ? "New Record!" : "Complete!";
-        const scoreColor = isNewHighScore 
-            ? "bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent" 
-            : "text-violet-600";
         
-        const icon = isNewHighScore ? "fa-trophy text-amber-400" : "fa-flag-checkered text-violet-500";
+        const scoreColor = isNewHighScore 
+            ? "bg-gradient-to-r from-amber-400 to-brand-500 bg-clip-text text-transparent" 
+            : "text-brand-600";
+        
+        const icon = isNewHighScore ? "fa-trophy text-amber-400" : "fa-flag-checkered text-brand-500";
 
         return `
             <div class="text-center mt-4">
@@ -149,7 +149,7 @@ export class WinScreenManager {
             <div class="mt-8">
                 <button id="restartButton" 
                     class="group relative w-full bg-slate-900 text-white p-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all duration-200 overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-violet-600 to-fuchsia-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-brand-600 to-brand-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <span class="relative flex items-center justify-center gap-2">
                         Play Again <i class="fa-solid fa-rotate-right group-hover:rotate-180 transition-transform duration-500"></i>
                     </span>
@@ -162,39 +162,30 @@ export class WinScreenManager {
     }
 
     private setupEventListeners(): void {
-        // Create a controller to clean up all listeners at once
         this.cleanupController = new AbortController();
         const { signal } = this.cleanupController;
 
-        // Keyboard listener
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
-                e.preventDefault(); // Prevent scrolling
+                e.preventDefault();
                 this.handleRestart();
             }
         }, { signal });
 
-        // Click listener
         const btn = this.overlay.querySelector('#restartButton');
         btn?.addEventListener('click', () => this.handleRestart(), { signal });
     }
 
     private handleRestart(): void {
-        // Prevent double clicks
         if (this.cleanupController?.signal.aborted) return;
-
         this.hideScreen();
-        // Small delay to allow fade out before logic reset
         setTimeout(() => this.onRestart(), 300);
     }
 
     private animateOverlayEntrance(): void {
         this.overlay.style.display = 'flex';
-        this.overlay.style.pointerEvents = 'auto'; // Re-enable clicks
-        
-        // Force reflow
+        this.overlay.style.pointerEvents = 'auto';
         this.overlay.offsetHeight; 
-
         this.overlay.style.opacity = '1';
         
         const content = this.overlay.querySelector('#win-modal-content') as HTMLElement;
@@ -205,13 +196,11 @@ export class WinScreenManager {
     }
 
     hideScreen(): void {
-        // 1. Remove listeners immediately
         if (this.cleanupController) {
             this.cleanupController.abort();
             this.cleanupController = null;
         }
 
-        // 2. Start Visual Exit
         const content = this.overlay.querySelector('#win-modal-content') as HTMLElement;
         if (content) {
             content.style.opacity = '0';
@@ -220,14 +209,12 @@ export class WinScreenManager {
         this.overlay.style.opacity = '0';
         this.overlay.style.pointerEvents = 'none';
 
-        // 3. Remove from DOM flow after animation
         setTimeout(() => {
             this.overlay.style.display = 'none';
-            this.overlay.innerHTML = ''; // Clean up DOM
+            this.overlay.innerHTML = '';
         }, 300);
     }
 
-    // Helper to inject a tiny bit of CSS for the custom scrollbar
     private injectCustomStyles(): void {
         if (document.getElementById('win-screen-styles')) return;
         const style = document.createElement('style');
@@ -235,8 +222,8 @@ export class WinScreenManager {
         style.textContent = `
             .custom-scrollbar::-webkit-scrollbar { width: 6px; }
             .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
-            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.2); border-radius: 4px; }
-            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.4); }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(252, 61, 3, 0.2); border-radius: 4px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(252, 61, 3, 0.5); }
             @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
             .animate-pulse-slow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
             .animate-bounce-slow { animation: float 3s ease-in-out infinite; }
