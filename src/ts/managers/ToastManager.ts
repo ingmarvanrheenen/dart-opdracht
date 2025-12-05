@@ -36,12 +36,22 @@ export class ToastManager {
             type === 'success' ? 'bg-green-500' : 'bg-red-500'
         }`;
         
-        toast.style.bottom = '100px';
-        toast.style.right = '25px';
         toast.innerHTML = sillyMessage;
-        
-        canvas.parentElement.style.position = 'relative';
+
+        // Ensure the canvas wrapper is positioned relative so absolute toast sits inside it
+        canvas.parentElement.style.position = canvas.parentElement.style.position || 'relative';
         canvas.parentElement.appendChild(toast);
+
+        // Position the toast centered horizontally over the canvas and a bit from the top
+        const canvasRect = canvas.getBoundingClientRect();
+        const parentRect = canvas.parentElement.getBoundingClientRect();
+        const centerX = canvasRect.left - parentRect.left + canvasRect.width / 2;
+        const topY = canvasRect.top - parentRect.top + 18; // 18px from top of canvas
+
+        toast.style.left = `${centerX}px`;
+        toast.style.top = `${topY}px`;
+        // Use transform to center the toast and animate vertically
+        toast.style.transform = 'translate(-50%, 20px)';
         
         // Add bounce animation
         toast.style.transform = 'translateY(20px)';
